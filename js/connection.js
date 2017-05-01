@@ -81,6 +81,7 @@ function ConnectionController( $scope, rconService, $routeParams, $timeout, $loc
 	$scope.$on( "OnDisconnected", function ( x, ev )
 	{
 		console.log( ev );
+		if (ev.wasClean) return;
 		$scope.LastErrorMessage = "Connection closed with status code " + ev.code + ".";
 		switch (ev.code)
 		{

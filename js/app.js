@@ -33,7 +33,7 @@ app.config(function($routeProvider) {
 
 app.controller('RconController', RconController);
 
-function RconController($scope, $rootScope, rconService, $timeout, $route, $window) {
+function RconController($scope, $rootScope, rconService, $timeout, $route, $location) {
   $scope.$route = $route;
 
   $scope.pages = $.map($route.routes, function(value, index) {
@@ -66,13 +66,17 @@ function RconController($scope, $rootScope, rconService, $timeout, $route, $wind
   }
 
   rconService.OnClose = function(ev) {
+    $scope.Connected = false;
     $scope.$broadcast("OnDisconnected", ev);
     $scope.$digest();
+    $scope.address = '';
   }
 
   rconService.OnError = function(ev) {
+    $scope.Connected = false;
     $scope.$broadcast("OnConnectionError", ev);
     $scope.$digest();
+    $scope.address = '';
   }
 
   rconService.OnMessage = function(msg) {
@@ -84,9 +88,7 @@ function RconController($scope, $rootScope, rconService, $timeout, $route, $wind
   $scope.Disconnect = function() {
     if (confirm('Do you really want to disconnect?')) {
       rconService.Disconnect();
-      $scope.Connected = false;
-      $scope.address = '';
-      $window.location.href = '/';
+      $location.path('/');
     }
   }
 }
