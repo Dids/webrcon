@@ -55,6 +55,13 @@ function ConnectionController( $scope, rconService, $routeParams, $timeout, $loc
 
 	$scope.Connect = function ()
 	{
+		if (!$scope.Address && !$scope.Password)
+			return $scope.LastErrorMessage = "You need to provide a valid address and password.";
+		else if (!$scope.Address)
+			return $scope.LastErrorMessage = "You need to provide a valid address.";
+		else if (!$scope.Password)
+			return $scope.LastErrorMessage = "You need to provide a valid password.";
+
 		$scope.Address = $scope.Address.trim();
 		$scope.Password = $scope.Password.trim();
 
@@ -74,7 +81,23 @@ function ConnectionController( $scope, rconService, $routeParams, $timeout, $loc
 	$scope.$on( "OnDisconnected", function ( x, ev )
 	{
 		console.log( ev );
-		$scope.LastErrorMessage = "Connection was closed - Error " + ev.code;
+		$scope.LastErrorMessage = "Connection closed with status code " + ev.code + ".";
+		switch (ev.code)
+		{
+			case 1005:
+				$scope.LastErrorMessage += "\r\n\r\n";
+				$scope.LastErrorMessage += "Disconnected.";
+				break;
+			case 1006:
+				$scope.LastErrorMessage += "\r\n\r\n";
+				$scope.LastErrorMessage += "Something went wrong. Check your address and password.";
+				break;
+			default:
+				if (ev.reason.length === 0) break;
+				$scope.LastErrorMessage += "\r\n\r\n";
+				$scope.LastErrorMessage += ev.reason;
+				break;
+		}
 		$scope.$digest();
 	} );
 

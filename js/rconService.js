@@ -16,7 +16,10 @@ function RconService() {
   var LastIndex = 1001;
 
   Service.Connect = function(addr, pass) {
-    this.Socket = new WebSocket("ws://" + addr + "/" + pass);
+    // TODO: Remove the console lines when this is confirmed working
+    console.log("Web Protocol: " + window.location.protocol);
+    console.log("WebSocket Protocol: " + (window.location.protocol !== 'https:' ? "ws://" : "wss://"));
+    this.Socket = new WebSocket((window.location.protocol != 'https:' ? "ws://" : "wss://") + addr + "/" + pass);
     this.Address = addr;
 
     this.Socket.onmessage = function(e) {
